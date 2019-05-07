@@ -1,0 +1,7 @@
+all:
+	as malloc2.s -o malloc2.o -g
+	gcc avalia.c -c -o avalia.o -g
+	gcc avalia.o malloc2.o -o programa -g
+
+clean:
+	rm *.o programa

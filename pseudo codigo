@@ -1,0 +1,64 @@
+
+
+global primeiroEnderecoLivre
+global ultimoEnderecoLivre
+
+
+
+
+
+aloca(100)
+
+
+
+    melhorEnderecoAteAgora = 0000
+    enderecoAtual = inicioDaHeap
+
+verificarEnderecoAtual:
+    # se o endereco atual for o brk (o fim da heap) acaba a busca aí
+    if enderecoAtual == brk
+        goto finalizarBusca
+
+    # se o endereço atual está ocupado ou se não é grande o bastante, avança pro próximo endereço
+    if enderecoAtual.ocupado OR enderecoAtual.tamanho < quantidadePedida
+        goto avancarParaProximoEndereco
+
+    # se não existe um endereço candidato a ser alocado, o endereço atual automaticamente já é o melhor
+    if melhorEnderecoAteAgora == 0000
+        goto escolherEnderecoAtual
+
+    # se o endereço atual tem tamanho menor que o melhor endereço a ser alocado anterior, ele é um endereço melhor para usar
+    if enderecoAtual.tamanho < melhorEnderecoAteAgora.tamanho
+        goto escolherEnderecoAtual
+
+    goto avancarParaProximoEndereco
+
+escolherEnderecoAtual:
+    melhorEnderecoAteAgora = enderecoAtual
+
+avancarParaProximoEndereco:
+    # soma ao endereco atual o tamanho dele + cabecalho (a parte onde definimos se o bloco está ocupado e qual o seu tamanho, temos que definir quanto espaco esse cabecalho ocupa)
+    enderecoAtual = enderecoAtual + enderecoAtual.tamanho + cabecalho
+
+    goto verificarEnderecoAtual
+
+finalizarBusca:
+    # se o melhorEnderecoAteAgora ainda for o 0 significa que nao foi encontrado um espaço adequado na heap
+    if melhorEnderecoAteAgora == 0000
+        goto aumentarTamanhoDaHeap
+
+    # deixa o endereço selecionado ocupado e retorna ele
+    melhorEnderecoAteAgora.ocupado = 1
+    return melhorEnderecoAteAgora
+
+aumentarTamanhoDaHeap:
+    # cria uma variavel para guardar o fim da heap antes de aumentar e consequentemente alterar o brk
+    fimDaHeap = brk
+    # soma com o brk a quantidade de memoria pedida e o cabecalho (assim a heap cresce a quantidade solicitada pelo usuario + um pouco para guardar o cabecalho)
+    brk = brk + quantidadePedida + cabecalho
+
+    # atualiza o cabecalho do bloco criado no fim da heap
+    fimDaHeap.ocupado = 1
+    fimDaHeap.tamanho = quantidadePedida
+
+    return fimDaHeap
